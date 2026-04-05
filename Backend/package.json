@@ -6,6 +6,7 @@
   "type": "module",
 
   "scripts": {
+    "start": "node server.js",
     "test": "cross-env NODE_ENV=test jest --runInBand",
     "test:unit": "cross-env NODE_ENV=test jest tests/unit --runInBand",
     "test:integration": "cross-env NODE_ENV=test jest tests/integration --runInBand",
