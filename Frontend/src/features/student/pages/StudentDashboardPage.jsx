@@ -1,7 +1,7 @@
 import Profile from "@/features/profile/components/Profile";
 import useStudentDashboard from "../hooks/useStudentDashboard";
 import LoadingOverlay from "@/shared/components/LoadingOverlay";
-import MyApplications from "../components/myApplications";
+import MyApplications from "../components/MyApplications";
 import "./studentDashboard.scss";
 
 export default function StudentDashboardPage() {
