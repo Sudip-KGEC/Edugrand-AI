@@ -1,7 +1,7 @@
 import cors from "cors";
 
 const allowedOrigins = [
-  "http://localhost:5173",
+  "https://edugrand-ai-smat.vercel.app",
   process.env.FRONTEND_URL,
 ];
 
