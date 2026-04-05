@@ -1,0 +1,89 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+
+  "scripts": {
+    "test": "cross-env NODE_ENV=test jest --runInBand",
+    "test:unit": "cross-env NODE_ENV=test jest tests/unit --runInBand",
+    "test:integration": "cross-env NODE_ENV=test jest tests/integration --runInBand",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage",
+    "test:ci": "cross-env NODE_ENV=test jest --ci --coverage --runInBand",
+    "dev": "npx nodemon src/app/server.js"
+  },
+
+  "dependencies": {
+    "@google/genai": "^1.46.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.3.1",
+    "morgan": "^1.10.1",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^8.0.3"
+  },
+
+  "devDependencies": {
+    "@babel/preset-env": "^7.29.2",
+    "babel-jest": "^30.3.0",
+    "cross-env": "^10.1.0",
+    "jest": "^30.3.0",
+    "mongodb-memory-server": "^11.0.1",
+    "supertest": "^7.2.2"
+  },
+
+  "jest": {
+    "testEnvironment": "node",
+
+    "roots": ["<rootDir>/tests"],
+
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+
+    "setupFiles": [
+      "<rootDir>/tests/setup/setupEnv.js"
+    ],
+
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup/setupAfterEnv.js"
+    ],
+
+    "clearMocks": true,
+    "restoreMocks": true,
+
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
+
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/server.js",
+      "!src/app/server.js"
+    ],
+
+    "coverageDirectory": "coverage",
+
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 85,
+        "lines": 90,
+        "statements": 90
+      }
+    }
+  }
+}

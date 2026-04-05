@@ -1,0 +1,65 @@
+.admin {
+  max-width: 1200px;
+  margin: auto;
+  padding: 28px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admin__error {
+  text-align: center;
+  padding: 60px 20px;
+  color: #f87171;
+  font-size: 0.9rem;
+}
+
+.admin__tabs {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  width: fit-content;
+}
+
+.admin__tab {
+  position: relative;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-transform: capitalize;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: var(--transition-smooth);
+
+  &:hover {
+    color: var(--foreground);
+    background: rgba(124, 58, 237, 0.08);
+  }
+
+  &.active {
+    color: #fff;
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+.admin__content {
+  margin-top: 10px;
+  animation: fadeIn 0.25s ease;
+}
+
+.create-scholarship {
+  max-width: 1200px;
+  margin: auto;
+  padding: 34px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
