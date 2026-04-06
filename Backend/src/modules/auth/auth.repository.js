@@ -25,7 +25,7 @@ export const deleteOtp = (id) => {
 };
 
 export const findUserByEmail = (email) => {
-  return User.findOne({ email });
+  return User.findOne({ email: email.toLowerCase() }).lean();
 };
 
 export const createUser = (data) => {

@@ -12,7 +12,7 @@ const connectDB = async () => {
 
     console.log(" MongoDB Connected");
   } catch (error) {
-    console.error("❌ DB Connection Error:", error.message);
+    console.error(" DB Connection Error:", error.message);
 
     // retry after 5s
     setTimeout(connectDB, 5000);
@@ -20,13 +20,13 @@ const connectDB = async () => {
 };
 
 
-// 🔥 DB EVENT LISTENERS (PUT HERE ONLY)
+//  DB EVENT LISTENERS (PUT HERE ONLY)
 mongoose.connection.on("connected", () => {
   console.log(" MongoDB connected");
 });
 
 mongoose.connection.on("error", (err) => {
-  console.error("🔴 MongoDB error:", err);
+  console.error(" MongoDB error:", err);
 });
 
 mongoose.connection.on("disconnected", () => {
