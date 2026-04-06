@@ -7,12 +7,18 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 
   &:active {
     transform: scale(0.94);
   }
 
   &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
     outline: none;
   }
 
@@ -29,6 +35,11 @@
     opacity: 0.9;
     transform: scale(1.08);
   }
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .celebrate__glow-lg {
