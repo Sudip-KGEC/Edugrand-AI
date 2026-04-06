@@ -11,28 +11,33 @@ export const AuthProvider = ({ children }) => {
 
   const isAuthInitialized = useRef(false);
 
-
   useEffect(() => {
+    let mounted = true;
+
     const initAuth = async () => {
       try {
         const data = await getUserProfile();
-        setUser(data);
+        if (mounted) setUser(data);
       } catch {
-        setUser(null);
+        if (mounted) setUser(null);
       } finally {
-        setLoading(false);
-        isAuthInitialized.current = true;
+        if (mounted) {
+          setLoading(false);
+          isAuthInitialized.current = true;
+        }
       }
     };
 
     initAuth();
-  }, []);
 
-  // ================= AUTH ACTIONS =================
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const login = useCallback((userData) => {
     setUser(userData);
-    setShowAuthModal(false); // auto close modal
+    setShowAuthModal(false);
   }, []);
 
   const logout = useCallback(async () => {
@@ -41,14 +46,10 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error("Logout error:", err);
     }
-
     setUser(null);
   }, []);
 
-  // ================= MODAL CONTROL =================
-
   const openAuth = useCallback(() => {
-    // 🔥 prevent modal spam
     setShowAuthModal((prev) => (prev ? prev : true));
   }, []);
 
@@ -56,10 +57,8 @@ export const AuthProvider = ({ children }) => {
     setShowAuthModal(false);
   }, []);
 
-  // 🔥 Register global trigger (axios)
   useEffect(() => {
     setAuthHandler(() => {
-      // only open after auth check complete
       if (isAuthInitialized.current) {
         openAuth();
       }
@@ -72,17 +71,14 @@ export const AuthProvider = ({ children }) => {
         user,
         setUser,
         loading,
-
         login,
         logout,
-
         showAuthModal,
         openAuth,
         closeAuth,
       }}
     >
-      {/* 🔥 Prevent UI flash before auth ready */}
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

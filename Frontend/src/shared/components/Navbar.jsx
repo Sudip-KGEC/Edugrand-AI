@@ -30,7 +30,8 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { language, changeLanguage, t } = useLanguage();
 
-  const [showAuthModal, setShowAuthModal] = useState(false);
+ const { openAuth, showAuthModal, closeAuth } = useAuth();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -197,7 +198,7 @@ export default function Navbar() {
               </div>
             ) : (
               <button
-                onClick={() => setShowAuthModal(true)}
+                 onClick={openAuth}
                 className="login-btn"
               >
                 {t.login}
@@ -233,7 +234,7 @@ export default function Navbar() {
       </nav>
 
       {showAuthModal && (
-        <AuthModal onClose={() => setShowAuthModal(false)} />
+        <AuthModal onClose={closeAuth} />
       )}
     </>
   );

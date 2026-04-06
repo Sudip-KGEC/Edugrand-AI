@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Search } from "lucide-react";
 import useScholarships from "../hooks/useScholarship";
 import ScholarshipCard from "../components/ScholarshipCard";
 import LoadingOverlay from "@/shared/components/LoadingOverlay";
 import { useLanguage } from "@/app/context/useLanguage";
-import { useAuth } from "@/app/context/auth.context.js";
+import { useAuth } from "@/app/context/useAuth";
+import ErrorState from "@/shared/components/ErrorState";
 
 import "./browse.scss";
 
@@ -14,43 +15,32 @@ export default function BrowsePage() {
   const { user, openAuth } = useAuth();
 
   const [search, setSearch] = useState("");
-  const [data, setData] = useState([]);
   const [openId, setOpenId] = useState(null);
   const [optimisticApplied, setOptimisticApplied] = useState(new Set());
 
   const u = user?.data;
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (!search) return setData(scholarships);
+  const filteredData = useMemo(() => {
+    if (!search) return scholarships;
 
-      const q = search.toLowerCase();
+    const q = search.toLowerCase();
 
-      setData(
-        scholarships.filter((s) =>
-          `${s.name} ${s.provider}`.toLowerCase().includes(q)
-        )
-      );
-    }, 300);
-
-    return () => clearTimeout(timeout);
+    return scholarships.filter((s) =>
+      `${s.name} ${s.provider}`.toLowerCase().includes(q)
+    );
   }, [search, scholarships]);
 
   useEffect(() => {
-    if (!user?.data?.appliedScholarships) return;
-
-    setOptimisticApplied((prev) => {
-      const next = new Set(user.data.appliedScholarships);
-      if (prev.size === next.size) return prev;
-      return next;
-    });
+    if (user?.data?.appliedScholarships) {
+      setOptimisticApplied(new Set(user.data.appliedScholarships));
+    }
   }, [user?.data?.appliedScholarships]);
 
-  const handleToggle = (id) => {
+  const handleToggle = useCallback((id) => {
     setOpenId((prev) => (prev === id ? null : id));
-  };
+  }, []);
 
-  const handleApply = async (id) => {
+  const handleApply = useCallback(async (id) => {
     if (!user) {
       openAuth();
       return;
@@ -67,7 +57,18 @@ export default function BrowsePage() {
         return next;
       });
     }
-  };
+  }, [user, openAuth, apply]);
+
+  if (loading) return <LoadingOverlay />;
+
+  if (error) {
+    return (
+      <ErrorState
+      message={error}
+      onAction={refetch}
+    />
+    );
+  }
 
   return (
     <div className="browse">
@@ -84,24 +85,11 @@ export default function BrowsePage() {
         </div>
       </div>
 
-      {loading && <LoadingOverlay />}
-
-      {!loading && error && (
-        <div className="browse__error">
-          <p>{error}</p>
-          <button onClick={refetch}>Retry</button>
-        </div>
-      )}
-
-      {!loading && !error && data.length === 0 && (
-        <div className="browse__empty">
-          No scholarships found
-        </div>
-      )}
-
-      {!loading && !error && data.length > 0 && (
+      {filteredData.length === 0 ? (
+        <div className="browse__empty">No scholarships found</div>
+      ) : (
         <div className="browse__grid">
-          {data.map((s) => {
+          {filteredData.map((s) => {
             const applied = optimisticApplied.has(s._id);
 
             return (

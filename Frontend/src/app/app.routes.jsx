@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Navbar from "@/shared/components/Navbar";
 
@@ -12,16 +12,19 @@ import CreateScholarshipPage from "@/features/admin/pages/CreateScholarshipPage"
 import ProtectedRoute from "@/app/routes/ProtectedRoute";
 import RoleRoute from "@/app/routes/RoleRoute";
 import Profile from "@/features/profile/components/Profile";
+import NotFound from "../shared/components/NotFound";
 
 export default function AppRoutes() {
   return (
-    <BrowserRouter>
+    <>
       <Navbar />
 
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/browse" element={<BrowsePage />} />
-        <Route path="/profile" 
+
+        <Route
+          path="/profile"
           element={
             <ProtectedRoute>
               <Profile />
@@ -65,12 +68,10 @@ export default function AppRoutes() {
         <Route
           path="*"
           element={
-            <div className="text-center py-20 text-slate-500">
-              404 | Page Not Found
-            </div>
+            <NotFound />
           }
         />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }

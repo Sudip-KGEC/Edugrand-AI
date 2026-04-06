@@ -12,7 +12,7 @@ import "./home.scss";
 export default function HomePage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { user, loading, openAuthModal } = useAuth();
+  const { user, loading, openAuth } = useAuth();
 
   return (
     <>
@@ -40,7 +40,7 @@ export default function HomePage() {
               <div className="btn-skeleton" />
             ) : !user ? (
               <button
-                onClick={openAuthModal}
+                onClick={openAuth}
                 className="btn-outline"
               >
                 {t.login}

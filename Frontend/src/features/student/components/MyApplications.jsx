@@ -1,9 +1,10 @@
 import { RefreshCw } from "lucide-react";
 import "./myApplications.scss";
+import Loader from "../../../shared/components/Loader";
 
 export default function MyApplications({ data = [], loading, onRefresh }) {
   if (loading) {
-    return <p className="apps__loading">Loading...</p>;
+    return <Loader fullScreen={false} text="Loading applications..." />;
   }
 
   if (!data.length) {

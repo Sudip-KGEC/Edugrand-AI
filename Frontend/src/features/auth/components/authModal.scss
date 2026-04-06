@@ -93,6 +93,8 @@ select.auth__input {
   cursor: pointer;
   text-align: center;
   transition: var(--transition-fast);
+  width: 20px;
+  padding: 2px 3px;
 
   &:hover {
     color: var(--primary-light);
@@ -101,12 +103,13 @@ select.auth__input {
 
 .btn-primary {
   width: 100%;
-  padding: 11px;
+  padding: 10px;
   border-radius: var(--radius-md);
   font-size: 0.85rem;
   font-weight: 600;
-  margin-top: 6px;
+  margin-top: 8px;
   transition: var(--transition-smooth);
+  margin: auto;
 
   &:hover {
     transform: translateY(-1px) scale(1.02);

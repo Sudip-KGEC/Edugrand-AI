@@ -1,23 +1,29 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAuth } from "@/app/context/useAuth";
+import Loader from "@/shared/components/Loader";
+import AccessDenied from "../../shared/components/AccessDenied";
 
 export default function ProtectedRoute({ children, role }) {
   const { user, loading, openAuth } = useAuth();
+  const triggeredRef = useRef(false);
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && !triggeredRef.current) {
+      triggeredRef.current = true;
       openAuth();
     }
   }, [loading, user, openAuth]);
 
   if (loading) {
-    return <div className="py-20 text-center">Loading...</div>;
+    return <Loader fullScreen text="Loading..." />;
   }
 
   if (!user) return null;
 
   if (role && user.role !== role) {
-    return <div className="text-center py-20 text-red-500">Access Denied</div>;
+    return (
+      <AccessDenied title="Access Denied" />
+    );
   }
 
   return children;

@@ -54,35 +54,6 @@
   color: var(--text-muted);
 }
 
-.browse__error {
-  text-align: center;
-  padding: 40px 20px;
-  border-radius: var(--radius-lg);
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.2);
-
-  p {
-    color: #f87171;
-    margin-bottom: 10px;
-    font-size: 0.85rem;
-  }
-
-  button {
-    padding: 8px 14px;
-    border-radius: var(--radius-md);
-    background: var(--gradient-primary);
-    color: #fff;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-glow);
-    }
-  }
-}
-
 .browse__empty {
   text-align: center;
   padding: 60px 20px;

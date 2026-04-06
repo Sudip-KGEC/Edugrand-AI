@@ -1,12 +1,14 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/useAuth.js";
+import { useAuth } from "../context/useAuth";
+import AccessDenied from "@/shared/components/AccessDenied";
 
 export default function RoleRoute({ role, children }) {
   const { user } = useAuth();
 
-  if (!user?.data) return <Navigate to="/" />;
-
-  if (user.data.role !== role) return <Navigate to="/" />;
+  if (role && user.role !== role) {
+    return (
+      <AccessDenied title="Access Denied" />
+    );
+  }
 
   return children;
 }
