@@ -1,7 +1,7 @@
 import cors from "cors";
 
 const allowedOrigins = [
-  "https://edugrand-ai-smat.vercel.app",
+  "https://edugrand-ai.vercel.app",
   process.env.FRONTEND_URL,
 ];
 
