@@ -3,18 +3,18 @@ import Otp from "../../database/models/Otp.model.js";
 import BlacklistToken from "../../database/models/BlacklistToken.model.js";
 
 export const saveOtp = async (email, otp) => {
-  return await Otp.findOneAndUpdate(
-    { email },
-    {
-      otp: String(otp),
-      otpExpiry: new Date(Date.now() + 5 * 60 * 1000),
-    },
-    {
-      upsert: true,
-      new: true,
-      runValidators: true,
-    }
-  );
+return await Otp.findOneAndUpdate(
+  { email },
+  {
+    otp: String(otp),
+    otpExpiry: new Date(Date.now() + 5 * 60 * 1000),
+  },
+  {
+    upsert: true,
+    returnDocument: "after",
+    runValidators: true,
+  }
+);
 };
 
 export const findOtp = (email) => {

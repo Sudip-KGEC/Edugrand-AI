@@ -45,7 +45,9 @@ export const verifyOtp = async ({ email, otp }) => {
 
   const record = await authRepo.findOtp(cleanEmail);
 
-  if (!record) throw ApiError.notFound("OTP not found");
+ if (!record) {
+  throw ApiError.badRequest("Invalid or expired OTP");
+}
 
   if (new Date(record.otpExpiry).getTime() < Date.now()) {
     throw ApiError.badRequest("OTP expired");

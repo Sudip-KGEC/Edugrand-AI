@@ -1,28 +1,15 @@
 import cors from "cors";
 import { configDotenv } from "dotenv";
-configDotenv()
+
+configDotenv();
 
 const allowedOrigins = [
   "https://edugrand-ai.vercel.app",
-   process.env.FRONTEND_URL,
-];
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 
 const corsConfig = cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-
-    const cleanOrigin = origin.replace(/\/$/, "");
-    const normalizedAllowed = allowedOrigins.map((o) =>
-      o?.replace(/\/$/, "")
-    );
-
-    if (normalizedAllowed.includes(cleanOrigin)) {
-      callback(null, true);
-    } else {
-      console.log("❌ CORS blocked:", origin);
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: allowedOrigins,
   credentials: true,
 });
 
