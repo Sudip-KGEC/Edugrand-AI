@@ -6,15 +6,16 @@ const otpSchema = new mongoose.Schema(
       type: String,
       required: true,
       lowercase: true,
-     trim: true, 
+      trim: true,
     },
     otp: {
       type: String,
       required: true,
     },
-     otpExpiry: { 
-      type: Number,
+    otpExpiry: {
+      type: Date,
       required: true,
+      index: { expires: 0 },
     },
   },
   {

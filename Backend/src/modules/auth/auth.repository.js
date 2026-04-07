@@ -7,12 +7,12 @@ export const saveOtp = async (email, otp) => {
     { email },
     {
       otp: String(otp),
-      otpExpiry: Date.now() + 5 * 60 * 1000,
+      otpExpiry: new Date(Date.now() + 5 * 60 * 1000),
     },
     {
       upsert: true,
-      returnDocument: "after",
-      runValidators: true
+      new: true,
+      runValidators: true,
     }
   );
 };
@@ -26,7 +26,7 @@ export const deleteOtp = (id) => {
 };
 
 export const findUserByEmail = (email) => {
-  return User.findOne({ email: email.toLowerCase() }).lean();
+  return User.findOne({ email: email.toLowerCase().trim() }).lean();
 };
 
 export const createUser = (data) => {
@@ -34,7 +34,10 @@ export const createUser = (data) => {
 };
 
 export const updateUser = (id, data) => {
-  return User.findByIdAndUpdate(id, data, { returnDocument: "after", runValidators: true});
+  return User.findByIdAndUpdate(id, data, {
+    new: true,
+    runValidators: true,
+  });
 };
 
 export const isTokenBlacklisted = (token) => {

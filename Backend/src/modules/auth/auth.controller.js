@@ -1,6 +1,13 @@
 import * as authService from "./auth.service.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 export const sendOtp = asyncHandler(async (req, res) => {
   const result = await authService.sendOtp(req.body.email);
   res.json(result);
@@ -10,12 +17,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   const result = await authService.verifyOtp(req.body);
 
   if (result.type === "LOGIN") {
-    res.cookie("token", result.token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie("token", result.token, cookieOptions);
   }
 
   res.json(result);
@@ -24,12 +26,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 export const completeProfile = asyncHandler(async (req, res) => {
   const result = await authService.completeProfile(req.body);
 
-  res.cookie("token", result.token, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+  res.cookie("token", result.token, cookieOptions);
 
   res.status(201).json(result);
 });
@@ -61,7 +58,7 @@ export const logout = asyncHandler(async (req, res) => {
 
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
 

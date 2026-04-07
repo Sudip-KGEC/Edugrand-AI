@@ -12,9 +12,15 @@ export const sendOtp = async (email) => {
   const user = await authRepo.findUserByEmail(cleanEmail);
   const existingOtp = await authRepo.findOtp(cleanEmail);
 
-  if (existingOtp && existingOtp.otpExpiry > Date.now()) {
-    const remaining = Math.ceil((existingOtp.otpExpiry - Date.now()) / 1000);
-    throw new Error(`OTP already sent. Try again in ${remaining}s`);
+  if (
+    existingOtp &&
+    new Date(existingOtp.otpExpiry).getTime() > Date.now()
+  ) {
+    const remaining = Math.ceil(
+      (new Date(existingOtp.otpExpiry).getTime() - Date.now()) / 1000
+    );
+
+    throw ApiError.rateLimit("OTP already sent", remaining);
   }
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -39,9 +45,15 @@ export const verifyOtp = async ({ email, otp }) => {
 
   const record = await authRepo.findOtp(cleanEmail);
 
-  if (!record) throw new Error("OTP not found");
-  if (record.otpExpiry < Date.now()) throw ApiError.badRequest("OTP expired");;
-  if (String(record.otp) !== String(otp)) throw new Error("Invalid OTP");
+  if (!record) throw ApiError.notFound("OTP not found");
+
+  if (new Date(record.otpExpiry).getTime() < Date.now()) {
+    throw ApiError.badRequest("OTP expired");
+  }
+
+  if (String(record.otp) !== String(otp)) {
+    throw ApiError.badRequest("Invalid OTP");
+  }
 
   await authRepo.deleteOtp(record._id);
 
@@ -66,7 +78,9 @@ export const verifyOtp = async ({ email, otp }) => {
 export const completeProfile = async (data) => {
   const existing = await authRepo.findUserByEmail(data.email);
 
-  if (existing) throw new Error("User already exists");
+  if (existing) {
+    throw ApiError.conflict("User already exists");
+  }
 
   const user = await authRepo.createUser(data);
   const token = generateToken(user);
@@ -82,9 +96,7 @@ export const getProfile = async (userId) => {
   const user = await authRepo.findUserById(userId);
 
   if (!user) {
-    const error = new Error("User not found");
-    error.statusCode = 404;
-    throw error;
+    throw ApiError.notFound("User not found");
   }
 
   return user;
@@ -105,4 +117,6 @@ export const logout = async (req) => {
       expiresAt: new Date(decoded.exp * 1000),
     });
   }
+
+  return { success: true };
 };

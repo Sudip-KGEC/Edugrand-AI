@@ -5,17 +5,17 @@ class ApiError extends Error {
     errors = [],
     isOperational = true,
   }) {
-    super(message);
+    super(typeof message === "string" ? message : message?.message);
 
     this.statusCode = statusCode;
     this.success = false;
     this.errors = errors;
     this.isOperational = isOperational;
+    this.data = typeof message === "object" ? message : null;
 
     Error.captureStackTrace(this, this.constructor);
   }
 
-  // Static helpers 
   static badRequest(message = "Bad Request", errors = []) {
     return new ApiError({ statusCode: 400, message, errors });
   }
@@ -45,6 +45,16 @@ class ApiError extends Error {
       statusCode: 500,
       message,
       isOperational: false,
+    });
+  }
+
+  static rateLimit(message, retryAfter) {
+    return new ApiError({
+      statusCode: 429,
+      message,
+      errors: [],
+      isOperational: true,
+      data: { retryAfter },
     });
   }
 }
