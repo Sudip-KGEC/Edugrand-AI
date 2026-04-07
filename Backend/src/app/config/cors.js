@@ -1,10 +1,13 @@
 import cors from "cors";
+import { configDotenv } from "dotenv";
+configDotenv()
 
 const allowedOrigins = [
   "https://edugrand-ai.vercel.app",
    process.env.FRONTEND_URL,
 ];
 
+console.log(allowedOrigins)
 const corsConfig = cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);

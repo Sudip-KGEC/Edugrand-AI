@@ -24,7 +24,7 @@
 .navbar__logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   cursor: pointer;
   font-weight: 600;
   font-size: 1.15rem;
@@ -40,6 +40,7 @@
 .navbar__logo-icon {
   width: 22px;
   height: 22px;
+  scale: 1.6;
   color: var(--primary);
   filter: drop-shadow(0 4px 10px rgba(124, 58, 237, 0.5));
 }
@@ -78,23 +79,11 @@
   }
 }
 
-.navbar__pill {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-md);
-  background: rgba(124, 58, 237, 0.12);
-  backdrop-filter: blur(8px);
-}
-
 .navbar__actions {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-left: auto;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
 }
 
 .icon-btn {
@@ -282,11 +271,18 @@
 }
 
 .mobile-menu {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  width: 100%;
+  z-index: 70;
+
   border-top: 1px solid var(--border-color);
   padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+
   background: var(--surface);
   backdrop-filter: blur(16px);
   animation: fadeIn 0.25s ease;
@@ -307,5 +303,56 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+};
+
+@media (max-width: 768px) {
+
+   .icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .navbar__container {
+    padding: 0 14px;   
+    height: 64px;      
+  }
+
+  .navbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .profile-btn,
+  .login-btn {
+    display: none;
+  }
+
+  .dropdown__trigger {
+    padding: 0 6px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+  .menu-btn {
+    width: 34px;
+    height: 34px;
+    margin-left: 4px; 
+  }
+
+  .navbar__logo {
+    font-size: 1rem;
+    gap: 10px;
+  }
+
+  .navbar__logo-icon {
+    scale: 1.4;
   }
 }

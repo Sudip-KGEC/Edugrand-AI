@@ -50,10 +50,11 @@
 
 .notify__panel {
   position: absolute;
-  right: 0;
+  right: 50%;
   margin-top: 12px;
   width: 340px;
   max-width: 92vw;
+
   background: var(--surface);
   backdrop-filter: blur(18px);
   border: 1px solid var(--border-color);
@@ -154,5 +155,18 @@
     color: var(--text-muted);
     margin-top: 3px;
     line-height: 1.4;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .notify__panel {
+    position: fixed;
+    top: 60px;
+    left: 10%;
+    right: 20%;
+    transform: translateX(-50%);
+    width: 72%;
+    max-width: 360px;
   }
 }

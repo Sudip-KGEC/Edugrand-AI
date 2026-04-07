@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 
 import Navbar from "@/shared/components/Navbar";
+import Footer from "@/shared/components/Footer";
+import ScrollToTop from "@/shared/components/ScrollToTop";
 
 import HomePage from "@/features/home/pages/HomePage";
 import BrowsePage from "@/features/scholarship/pages/BrowsePage";
@@ -17,6 +19,7 @@ import NotFound from "../shared/components/NotFound";
 export default function AppRoutes() {
   return (
     <>
+      <ScrollToTop />
       <Navbar />
 
       <Routes>
@@ -72,6 +75,8 @@ export default function AppRoutes() {
           }
         />
       </Routes>
+
+      <Footer />
     </>
   );
 }

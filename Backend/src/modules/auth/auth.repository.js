@@ -11,7 +11,8 @@ export const saveOtp = async (email, otp) => {
     },
     {
       upsert: true,
-      new: true,
+      returnDocument: "after",
+      runValidators: true
     }
   );
 };
@@ -33,7 +34,7 @@ export const createUser = (data) => {
 };
 
 export const updateUser = (id, data) => {
-  return User.findByIdAndUpdate(id, data, { new: true });
+  return User.findByIdAndUpdate(id, data, { returnDocument: "after", runValidators: true});
 };
 
 export const isTokenBlacklisted = (token) => {

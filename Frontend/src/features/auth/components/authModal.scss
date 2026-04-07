@@ -75,6 +75,10 @@ select.auth__input {
 
 .auth__link {
   font-size: 0.75rem;
+  max-width: fit-content;
+  padding: 4px 8px;
+  align-self:center;
+  border-radius: var(--radius-sm);
   color: var(--text-muted);
   margin-top: 4px;
   cursor: pointer;

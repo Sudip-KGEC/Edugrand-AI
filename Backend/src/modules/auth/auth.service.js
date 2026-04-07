@@ -4,6 +4,7 @@ import { sendEmail } from "../../services/email/email.service.js";
 import { otpTemplate } from "../../services/email/email.templates.js";
 import jwt from "jsonwebtoken";
 import BlacklistToken from "../../database/models/BlacklistToken.model.js";
+import { ApiError } from "../../utils/ApiError.js";
 
 export const sendOtp = async (email) => {
   const cleanEmail = email.trim().toLowerCase();
@@ -39,7 +40,7 @@ export const verifyOtp = async ({ email, otp }) => {
   const record = await authRepo.findOtp(cleanEmail);
 
   if (!record) throw new Error("OTP not found");
-  if (record.otpExpiry < Date.now()) throw new Error("OTP expired");
+  if (record.otpExpiry < Date.now()) throw ApiError.badRequest("OTP expired");;
   if (String(record.otp) !== String(otp)) throw new Error("Invalid OTP");
 
   await authRepo.deleteOtp(record._id);

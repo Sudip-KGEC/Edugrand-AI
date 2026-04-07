@@ -7,7 +7,12 @@ import {
   LogOut,
   Menu,
   X,
+  Home,
+  Search,
+  LayoutDashboard,
+  User,
 } from "lucide-react";
+
 import { useNavigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { TRANSLATIONS } from "@/shared/constants/translations";
@@ -30,7 +35,7 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { language, changeLanguage, t } = useLanguage();
 
- const { openAuth, showAuthModal, closeAuth } = useAuth();
+  const { openAuth, showAuthModal, closeAuth } = useAuth();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -66,11 +71,11 @@ export default function Navbar() {
     { path: "/browse", label: t.browse },
     ...(u
       ? [
-          {
-            path: u.role === "admin" ? "/admin" : "/dashboard",
-            label: t.dashboard,
-          },
-        ]
+        {
+          path: u.role === "admin" ? "/admin" : "/dashboard",
+          label: t.dashboard,
+        },
+      ]
       : []),
   ];
 
@@ -198,7 +203,7 @@ export default function Navbar() {
               </div>
             ) : (
               <button
-                 onClick={openAuth}
+                onClick={openAuth}
                 className="login-btn"
               >
                 {t.login}
@@ -222,12 +227,43 @@ export default function Navbar() {
                   key={item.path}
                   label={item.label}
                   active={location.pathname === item.path}
+                  icon={
+                    item.path === "/" ? <Home /> :
+                      item.path === "/browse" ? <Search /> :
+                        <LayoutDashboard />
+                  }
                   onClick={() => {
                     navigate(item.path);
                     setMenuOpen(false);
                   }}
                 />
               ))}
+
+              {/* Profile */}
+              {u && (
+                <MobileNavLink
+                  label="Profile"
+                  icon={<User />}
+                  onClick={() => {
+                    navigate("/profile");
+                    setMenuOpen(false);
+                  }}
+                />
+              )}
+
+              {/* Logout */}
+              {u && (
+                <MobileNavLink
+                  label="Logout"
+                  icon={<LogOut />}
+                  variant="danger"
+                  onClick={() => {
+                    logout();
+                    navigate("/");
+                    setMenuOpen(false);
+                  }}
+                />
+              )}
             </motion.div>
           )}
         </AnimatePresence>
