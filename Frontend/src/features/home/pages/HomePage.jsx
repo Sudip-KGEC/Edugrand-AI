@@ -1,13 +1,18 @@
-import { Search, FileText, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 import { useLanguage } from "@/app/context/useLanguage";
 import { useAuth } from "@/app/context/useAuth";
 
-import CelebrateLogo from "@/shared/components/CelebrateLogo";
+import HeroSection from "../components/HeroSection";
+import ServicesSection from "../components/ServicesSection";
+import HowItWorks from "../components/HowItWorks";
+
 import ChatBot from "@/features/chatbot/components/ChatBot";
 
 import "./home.scss";
+import Testimonials from "../components/Testimonials";
+import Stats from "../components/Stats";
+import Categories from "../components/Categories";
+import CTA from "../components/CTA";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -15,70 +20,25 @@ export default function HomePage() {
   const { user, loading, openAuth } = useAuth();
 
   return (
-    <>
-      <div className="home">
+    <div className="home">
+      <HeroSection
+        t={t}
+        navigate={navigate}
+        user={user}
+        loading={loading}
+        openAuth={openAuth}
+      />
 
-        <div className="home__hero">
-          <div className="home__logo">
-            <div className="home__glow" />
-            <CelebrateLogo />
-          </div>
+      <ServicesSection t={t} />
 
-          <h1 className="home__title">{t.heroTitle}</h1>
+      <HowItWorks />
 
-          <p className="home__desc">{t.heroDesc}</p>
+      <Testimonials/>
+      <Stats/>
+      <Categories/>
+      <CTA/>
 
-          <div className="home__actions">
-            <button
-              onClick={() => navigate("/browse")}
-              className="btn-primary"
-            >
-              {t.browse}
-            </button>
-
-            {loading ? (
-              <div className="btn-skeleton" />
-            ) : !user ? (
-              <button
-                onClick={openAuth}
-                className="btn-outline"
-              >
-                {t.login}
-              </button>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="home__features">
-          <Feature
-            icon={<Search />}
-            title={t.featureSearchTitle}
-            desc={t.featureSearchDesc}
-          />
-          <Feature
-            icon={<FileText />}
-            title={t.featureApplyTitle}
-            desc={t.featureApplyDesc}
-          />
-          <Feature
-            icon={<CheckCircle />}
-            title={t.featureTrackTitle}
-            desc={t.featureTrackDesc}
-          />
-        </div>
-
-        <ChatBot />
-      </div>
-    </>
-  );
-}
-
-function Feature({ icon, title, desc }) {
-  return (
-    <div className="feature">
-      <div className="feature__icon">{icon}</div>
-      <h3 className="feature__title">{title}</h3>
-      <p className="feature__desc">{desc}</p>
+      <ChatBot />
     </div>
   );
 }
