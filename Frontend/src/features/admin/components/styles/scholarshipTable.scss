@@ -67,3 +67,62 @@ tbody tr {
   color: var(--primary-light);
   box-shadow: 0 0 10px rgba(124, 58, 237, 0.25);
 }
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  backdrop-filter: blur(6px);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition-fast);
+
+  &:hover {
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.edit-btn {
+  color: var(--primary-light);
+  border-color: rgba(124, 58, 237, 0.3);
+
+  &:hover {
+    background: rgba(124, 58, 237, 0.12);
+    color: var(--primary);
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.25);
+  }
+}
+
+.delete-btn {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.3);
+
+  &:hover {
+    background: rgba(248, 113, 113, 0.12);
+    color: #ef4444;
+    box-shadow: 0 0 10px rgba(248, 113, 113, 0.25);
+  }
+}
+
+.actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}

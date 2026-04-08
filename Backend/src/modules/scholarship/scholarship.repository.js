@@ -2,7 +2,8 @@ import Scholarship from "../../database/models/Scholarship.model.js";
 import Application from "../../database/models/Application.model.js";
 import User from "../../database/models/User.model.js";
 import Notification from "../../database/models/Notification.model.js";
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import { mapDegreeToLevel } from "../../utils/degreeMapper.js";
 
 export const findScholarships = (query) => {
   const filter = query.adminId ? { createdBy: query.adminId } : {};
@@ -68,7 +69,7 @@ export const addAppliedScholarship = (studentId, scholarshipId) => {
   return User.findByIdAndUpdate(
     studentId,
     { $addToSet: { appliedScholarships: scholarshipId } },
-    { new: true }
+    { returnDocument: "after" }
   ).lean();
 };
 
@@ -96,7 +97,7 @@ export const findApplicationsByAdmin = async (adminId) => {
 };
 
 export const updateApplicationStatus = (id, status) => {
-  return Application.findByIdAndUpdate(id, { status }, { new: true });
+  return Application.findByIdAndUpdate(id, { status }, {  returnDocument: "after" , runValidators: true });
 };
 
 export const deleteApplicationsByScholarship = (scholarshipId) => {
@@ -107,15 +108,30 @@ export const deleteScholarship = (id) => {
   return Scholarship.findByIdAndDelete(id);
 };
 
+export const updateScholarship = (id, data) => {
+  return Scholarship.findByIdAndUpdate(id, data, {
+    returnDocument: "after",          
+    runValidators: true 
+  });
+};
+
 export const notifyMatchingStudents = async (scholarship) => {
-  const students = await User.find({
-    role: "student",
-    currentDegree: scholarship.degreeLevel,
-  }).select("_id");
+  const students = await User.find({ role: "student" });
 
-  if (!students.length) return [];
+  const matchedStudents = students.filter((s) => {
+    const currentLevel = mapDegreeToLevel(s.currentDegree);
+    const highestLevel = mapDegreeToLevel(s.highestDegree);
 
-  const notifications = students.map((s) => ({
+    return (
+      (currentLevel === scholarship.degreeLevel ||
+        highestLevel === scholarship.degreeLevel) &&
+      s.cgpa >= scholarship.gpaRequirement
+    );
+  });
+
+  if (!matchedStudents.length) return [];
+
+  const notifications = matchedStudents.map((s) => ({
     recipientId: s._id,
     title: "New Match Found!",
     message: `Scholarship "${scholarship.name}" matches your profile`,

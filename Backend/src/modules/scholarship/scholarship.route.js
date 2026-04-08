@@ -14,5 +14,6 @@ router.get("/admin", protect, authorize("admin"), controller.getAdminScholarship
 router.get("/admin/applications", protect, authorize("admin"), controller.getAdminApplications);
 router.patch("/admin/applications/:id/status", protect, authorize("admin"), controller.updateApplicationStatus);
 router.delete("/:id", protect, authorize("admin"), controller.deleteScholarship);
+router.put("/:id" , protect , authorize("admin") , controller.editScholarship) 
 
 export default router;

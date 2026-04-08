@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Mail, Pencil, Loader2, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import useProfile from "../hooks/useProfile";
 import "./profile.scss";
 
 export default function Profile() {
-  const navigate = useNavigate();
+ 
 
   const { user, formData, setFormData, updateProfile, loading } = useProfile();
 
@@ -42,13 +41,6 @@ export default function Profile() {
       <div className="profile">
 
         <div className="profile__actions">
-          {u.role === "admin" && (
-            <button onClick={() => navigate("/admin/create")} className="btn-create">
-              <Plus size={14} />
-              Create
-            </button>
-          )}
-
           <button onClick={() => setOpen(true)} className="btn-icon">
             <Pencil size={16} />
           </button>

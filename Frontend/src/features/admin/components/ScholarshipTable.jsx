@@ -1,6 +1,7 @@
 import "./styles/scholarshipTable.scss";
+import { Pencil, Trash2 } from "lucide-react";
 
-export default function ScholarshipTable({ data = [] }) {
+export default function ScholarshipTable({ data = [], onDelete, onEdit }) {
   return (
     <div className="sch-table">
       <table>
@@ -9,6 +10,7 @@ export default function ScholarshipTable({ data = [] }) {
             <th>Name</th>
             <th>Provider</th>
             <th>Applicants</th>
+            <th>Actions</th>
           </tr>
         </thead>
 
@@ -26,6 +28,22 @@ export default function ScholarshipTable({ data = [] }) {
                   <span className="badge">
                     {s.applicantCount || 0}
                   </span>
+                </td>
+
+                <td className="actions">
+                  <button
+                    className="edit-btn"
+                    onClick={() => onEdit(s)}
+                  >
+                    <Pencil size={16} />
+                  </button>
+
+                  <button
+                    className="delete-btn"
+                    onClick={() => onDelete(s._id)}
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </td>
               </tr>
             ))}

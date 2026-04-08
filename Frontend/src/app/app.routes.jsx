@@ -9,7 +9,7 @@ import BrowsePage from "@/features/scholarship/pages/BrowsePage";
 
 import StudentDashboardPage from "@/features/student/pages/StudentDashboardPage";
 import AdminDashboardPage from "@/features/admin/pages/AdminDashboardPage";
-import CreateScholarshipPage from "@/features/admin/pages/CreateScholarshipPage";
+
 
 import ProtectedRoute from "@/app/routes/ProtectedRoute";
 import RoleRoute from "@/app/routes/RoleRoute";
@@ -52,17 +52,6 @@ export default function AppRoutes() {
             <ProtectedRoute>
               <RoleRoute role="admin">
                 <AdminDashboardPage />
-              </RoleRoute>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/create"
-          element={
-            <ProtectedRoute>
-              <RoleRoute role="admin">
-                <CreateScholarshipPage />
               </RoleRoute>
             </ProtectedRoute>
           }

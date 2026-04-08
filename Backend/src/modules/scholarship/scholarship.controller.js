@@ -37,6 +37,11 @@ export const updateApplicationStatus = asyncHandler(async (req, res) => {
 });
 
 export const deleteScholarship = asyncHandler(async (req, res) => {
-  await service.deleteScholarship(req.user.id, req.params.id);
+  await service.deleteScholarship(req.params.id);
   res.json({ success: true });
 });
+
+export const editScholarship = asyncHandler( async (req , res) => {
+ const updated =  await service.editScholarship(req.params.id , req.body);
+  res.json({ success: true , data : updated , id: updated._id});
+})

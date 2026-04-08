@@ -26,14 +26,15 @@ export default function ApplicationTable({ data = [], onUpdate }) {
 
                 <td>
                   <select
-                    value={app.status || "Pending"}
+                    value={app.status || "Applied"}
                     onChange={(e) =>
                       onUpdate(app._id || app.id, e.target.value)
                     }
                     className="status-select"
                   >
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
+                    <option value="Applied">Applied</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="Accepted">Accepted</option>
                     <option value="Rejected">Rejected</option>
                   </select>
                 </td>

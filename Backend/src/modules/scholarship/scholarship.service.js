@@ -38,7 +38,7 @@ export const create = async (adminId, payload) => {
      adminId: adminId
   });
 
-  repo.notifyMatchingStudents(scholarship).catch(() => {});
+ await repo.notifyMatchingStudents(scholarship);
 
   return scholarship;
 };
@@ -61,17 +61,26 @@ export const updateStatus = async (id, status) => {
   return updated;
 };
 
-export const deleteScholarship = async (adminId, scholarshipId) => {
+export const deleteScholarship = async (scholarshipId) => {
   const scholarship = await repo.findScholarshipById(scholarshipId);
 
-  if (!scholarship) throw new ApiError(404, "Scholarship not found");
-
-  if (scholarship.createdBy.toString() !== adminId.toString()) {
-    throw new ApiError(403, "Not authorized");
+  if (!scholarship) {
+    throw new ApiError(404, "Scholarship not found");
   }
 
   await repo.deleteApplicationsByScholarship(scholarshipId);
   await repo.deleteScholarship(scholarshipId);
+};
+
+
+export const editScholarship = async (id, data) => {
+   const updated = await repo.updateScholarship(id, data);
+
+  if (!updated) {
+    throw new ApiError(404, "Scholarship not found");
+  }
+
+  return updated;
 };
 
 const mapScholarship = (s) => ({

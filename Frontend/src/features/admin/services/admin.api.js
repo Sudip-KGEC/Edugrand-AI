@@ -1,29 +1,43 @@
 import api from "@/app/api/axios";
 
-export const getAdminScholarships = () =>
-  api.get("/scholarships/admin").then(res => res.data);
+export const getAdminScholarships = async () => {
+  const { data } = await api.get("/scholarships/admin");
+  return data?.data || data || [];
+};
 
-export const getAdminApplications = () =>
-  api.get("/scholarships/admin/applications")
-    .then(res => res.data);
+export const getAdminApplications = async () => {
+  const { data } = await api.get("/scholarships/admin/applications");
+  return data?.data || data || [];
+};
 
-export const updateApplicationStatus = (id, status) => {
+export const createScholarship = async (payload) => {
+  const { data } = await api.post("/scholarships", payload);
+  return data?.data || data;
+};
+
+export const updateScholarship = async (id, payload) => {
+  if (!id) throw new Error("Scholarship ID is required");
+
+  const { data } = await api.put(`/scholarships/${id}`, payload);
+  return data?.data || data;
+};
+
+export const updateApplicationStatus = async (id, status) => {
   if (!id || !status) {
     throw new Error("Invalid application update request");
   }
 
-  return api.patch(
+  const { data } = await api.patch(
     `/scholarships/admin/applications/${id}/status`,
     { status }
-  ).then(res => res.data);
+  );
+
+  return data?.data || data;
 };
 
-export const deleteScholarship = (id) => {
+export const deleteScholarship = async (id) => {
   if (!id) throw new Error("Scholarship ID is required");
 
-  return api.delete(`/scholarships/${id}`)
-    .then(res => res.data);
+  const { data } = await api.delete(`/scholarships/${id}`);
+  return data?.data || data;
 };
-
-export const createScholarship = (data) =>
-  api.post("/scholarships", data).then((res) => res.data);
