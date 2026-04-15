@@ -1,18 +1,6 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-  connectionTimeout: 10000,
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 function generateOtpTemplate(otp) {
   return `
@@ -114,13 +102,10 @@ function generateOtpTemplate(otp) {
 }
 
 export async function sendOtpEmail(email, otp) {
-  await transporter.verify();
-
-  await transporter.sendMail({
-    from: `"Edugrand AI Security" <${process.env.SMTP_USER}>`,
+  await resend.emails.send({
+    from: "Edugrand AI <onboarding@resend.dev>",
     to: email,
     subject: "Your Edugrand Verification Code",
-    text: `Your Edugrand OTP is ${otp}. It expires in 10 minutes.`,
     html: generateOtpTemplate(otp),
   });
 }
