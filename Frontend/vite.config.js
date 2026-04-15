@@ -16,12 +16,14 @@ export default defineConfig({
 
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ["react", "react-dom"],
-          router: ["react-router-dom"],
-          icons: ["lucide-react"],
-          motion: ["framer-motion"],
-          markdown: ["react-markdown"],
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react")) return "react";
+            if (id.includes("react-router")) return "router";
+            if (id.includes("lucide-react")) return "icons";
+            if (id.includes("framer-motion")) return "motion";
+            if (id.includes("react-markdown")) return "markdown";
+          }
         },
       },
     },
