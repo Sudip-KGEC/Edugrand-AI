@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./scholarshipCard.scss";
 
 export default function ScholarshipCard({
@@ -10,16 +10,14 @@ export default function ScholarshipCard({
 }) {
   const isAdmin = user?.role === "admin";
   const isStudent = user?.role === "student";
-  const hasOfficialLink = !!scholarship?.officialUrl;
+  const hasOfficialLink = Boolean(scholarship?.officialUrl);
 
   const [loading, setLoading] = useState(false);
   const [localApplied, setLocalApplied] = useState(applied);
 
-  const handleRedirect = () => {
-    if (scholarship?.officialUrl) {
-      window.open(scholarship.officialUrl, "_blank");
-    }
-  };
+  useEffect(() => {
+    setLocalApplied(applied);
+  }, [applied]);
 
   const handleApplyClick = async () => {
     if (loading || localApplied) return;
@@ -27,7 +25,11 @@ export default function ScholarshipCard({
     setLocalApplied(true);
     setLoading(true);
 
-    await onApply(scholarship._id);
+    const res = await onApply(scholarship._id);
+
+    if (!res?.success && !res?.alreadyApplied) {
+      setLocalApplied(false);
+    }
 
     setLoading(false);
   };
@@ -35,7 +37,6 @@ export default function ScholarshipCard({
   return (
     <div className="card">
       <div className="card__content">
-
         <div className="card__header">
           <div>
             <h3 className="card__title">{scholarship.name}</h3>
@@ -72,7 +73,11 @@ export default function ScholarshipCard({
         {isAdmin && (
           <div className="admin-link">
             {hasOfficialLink ? (
-              <a href={scholarship.officialUrl} target="_blank">
+              <a
+                href={scholarship.officialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {scholarship.officialUrl}
               </a>
             ) : (
@@ -82,32 +87,37 @@ export default function ScholarshipCard({
         )}
 
         {isStudent && !isAdmin && (
-          <>
-            {hasOfficialLink ? (
-              <button onClick={handleRedirect} className="btn-indigo">
-                Visit Official Site
-              </button>
-            ) : (
-              <button
-                onClick={handleApplyClick}
-                disabled={localApplied || loading}
-                className={`btn-primary ${
-                  localApplied ? "disabled" : ""
-                }`}
+          <div className="card__actions">
+            {hasOfficialLink && (
+              <a
+                href={scholarship.officialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-indigo"
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="spin" size={16} />
-                    Applying...
-                  </>
-                ) : localApplied ? (
-                  "Applied"
-                ) : (
-                  "Apply Now"
-                )}
-              </button>
+                Visit Official Site
+              </a>
             )}
-          </>
+
+            <button
+              onClick={handleApplyClick}
+              disabled={localApplied || loading}
+              className={`btn-primary ${
+                localApplied ? "disabled" : ""
+              }`}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="spin" size={16} />
+                  Applying...
+                </>
+              ) : localApplied ? (
+                "Applied"
+              ) : (
+                "Apply Now"
+              )}
+            </button>
+          </div>
         )}
 
         {!user && (
