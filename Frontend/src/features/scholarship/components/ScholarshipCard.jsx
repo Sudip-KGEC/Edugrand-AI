@@ -82,21 +82,25 @@ export default function ScholarshipCard({
         {isStudent && !isAdmin && (
           <>
             {hasOfficialLink ? (
-              <a
-                href={scholarship.officialUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(
+                    scholarship.officialUrl,
+                    "_blank",
+                    "noopener,noreferrer"
+                  );
+                }}
                 className="btn-indigo"
               >
                 Visit Official Site
-              </a>
+              </button>
             ) : (
               <button
                 onClick={handleApplyClick}
                 disabled={localApplied || loading}
-                className={`btn-primary ${
-                  localApplied ? "disabled" : ""
-                }`}
+                className={`btn-primary ${localApplied ? "disabled" : ""
+                  }`}
               >
                 {loading ? (
                   <>
