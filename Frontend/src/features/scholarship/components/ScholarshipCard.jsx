@@ -29,7 +29,6 @@ export default function ScholarshipCard({
   return (
     <div className="card">
       <div className="card__content">
-
         <div className="card__header">
           <div>
             <h3 className="card__title">{scholarship.name}</h3>
@@ -99,8 +98,9 @@ export default function ScholarshipCard({
               <button
                 onClick={handleApplyClick}
                 disabled={localApplied || loading}
-                className={`btn-primary ${localApplied ? "disabled" : ""
-                  }`}
+                className={`btn-primary ${
+                  localApplied ? "disabled" : ""
+                }`}
               >
                 {loading ? (
                   <>
