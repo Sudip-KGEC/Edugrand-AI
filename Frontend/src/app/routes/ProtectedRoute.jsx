@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useAuth } from "@/app/context/useAuth";
 import Loader from "@/shared/components/Loader";
-import AccessDenied from "../../shared/components/AccessDenied";
+import AccessDenied from "@/shared/components/AccessDenied";
 
 export default function ProtectedRoute({ children, role }) {
   const { user, loading, openAuth } = useAuth();
@@ -18,12 +18,12 @@ export default function ProtectedRoute({ children, role }) {
     return <Loader fullScreen text="Loading..." />;
   }
 
-  if (!user) return null;
+  if (!user) {
+    return <Loader fullScreen text="Redirecting..." />;
+  }
 
   if (role && user.role !== role) {
-    return (
-      <AccessDenied title="Access Denied" />
-    );
+    return <AccessDenied title="Access Denied" />;
   }
 
   return children;

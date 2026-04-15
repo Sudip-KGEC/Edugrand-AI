@@ -3,7 +3,7 @@ import { updateProfileApi } from "../services/profile.api";
 import { useAuth } from "@/app/context/useAuth";
 
 export default function useProfile() {
-  const { user, login } = useAuth();
+  const { user, updateUser, refreshUser } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -11,8 +11,8 @@ export default function useProfile() {
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
-    if (!user?.data) return;
-    setFormData(user.data);
+    if (!user) return;
+    setFormData(user);
   }, [user]);
 
   const updateProfile = async () => {
@@ -23,8 +23,17 @@ export default function useProfile() {
 
       const res = await updateProfileApi(formData);
 
-      login(res);
-      setSuccess("Profile updated successfully ");
+      const updatedUser =
+        res?.user ||
+        res?.data?.user ||
+        res?.data ||
+        res;
+
+      updateUser(updatedUser);
+
+      await refreshUser();
+
+      setSuccess("Profile updated successfully");
     } catch (err) {
       setError(err?.response?.data?.message || err.message);
     } finally {

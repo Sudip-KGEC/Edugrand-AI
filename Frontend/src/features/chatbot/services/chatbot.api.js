@@ -2,12 +2,18 @@ import api from "@/app/api/axios";
 
 export const sendMessageToAI = async (message, history = []) => {
   try {
-    const res = await api.post("/chat", {
+    const res = await api.post("/ai", {
       message,
       history,
     });
 
-    const text = res?.data?.data?.text;
+    const data = res.data;
+
+    const text =
+      data?.text ||
+      data?.data?.text ||
+      data?.response ||
+      "";
 
     if (!text || !text.trim()) {
       throw new Error("Empty AI response");

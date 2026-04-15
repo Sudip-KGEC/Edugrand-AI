@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { AuthContext } from "./auth.context";
 import { getUserProfile } from "@/features/auth/services/auth.api";
-import api from "@/app/api/axios";
+import api, { setAccessToken } from "@/app/api/axios";
 import { setAuthHandler } from "@/app/authEvent";
 
 export const AuthProvider = ({ children }) => {
@@ -11,19 +11,39 @@ export const AuthProvider = ({ children }) => {
 
   const isAuthInitialized = useRef(false);
 
+  const normalizeUser = (res) => {
+    return res?.user || res?.data?.user || res?.data || res || null;
+  };
+
+  const fetchProfile = useCallback(async () => {
+    const res = await getUserProfile();
+    return normalizeUser(res);
+  }, []);
+
   useEffect(() => {
     let mounted = true;
 
     const initAuth = async () => {
       try {
-        const data = await getUserProfile();
-        if (mounted) setUser(data);
+        const res = await api.post(
+          "/auth/refresh",
+          {},
+          { withCredentials: true, _skipAuthRefresh: true }
+        );
+
+        if (res?.data?.accessToken) {
+          setAccessToken(res.data.accessToken);
+        }
+
+        const profile = await fetchProfile();
+
+        if (mounted) setUser(profile);
       } catch {
         if (mounted) setUser(null);
       } finally {
         if (mounted) {
-          setLoading(false);
           isAuthInitialized.current = true;
+          setLoading(false);
         }
       }
     };
@@ -33,9 +53,10 @@ export const AuthProvider = ({ children }) => {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [fetchProfile]);
 
-  const login = useCallback((userData) => {
+  const login = useCallback((userData, token) => {
+    if (token) setAccessToken(token);
     setUser(userData);
     setShowAuthModal(false);
   }, []);
@@ -43,11 +64,27 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(async () => {
     try {
       await api.post("/auth/logout");
-    } catch (err) {
-      console.error("Logout error:", err);
+    } finally {
+      setAccessToken(null);
+      setUser(null);
     }
-    setUser(null);
   }, []);
+
+  const updateUser = useCallback((data) => {
+    setUser((prev) => {
+      const updated = normalizeUser(data);
+      return { ...prev, ...updated };
+    });
+  }, []);
+
+  const refreshUser = useCallback(async () => {
+    try {
+      const profile = await fetchProfile();
+      setUser(profile);
+    } catch {
+      setUser(null);
+    }
+  }, [fetchProfile]);
 
   const openAuth = useCallback(() => {
     setShowAuthModal((prev) => (prev ? prev : true));
@@ -59,9 +96,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     setAuthHandler(() => {
-      if (isAuthInitialized.current) {
-        openAuth();
-      }
+      if (isAuthInitialized.current) openAuth();
     });
   }, [openAuth]);
 
@@ -76,6 +111,8 @@ export const AuthProvider = ({ children }) => {
         showAuthModal,
         openAuth,
         closeAuth,
+        updateUser,
+        refreshUser,
       }}
     >
       {children}

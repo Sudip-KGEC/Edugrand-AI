@@ -1,9 +1,9 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { Search } from "lucide-react";
-import useScholarships from "../hooks/useScholarship";
+import useScholarships from "../hooks/useScholarship.js";
 import ScholarshipCard from "../components/ScholarshipCard";
 import LoadingOverlay from "@/shared/components/LoadingOverlay";
-import { useLanguage } from "@/app/context/useLanguage";
+import { useLanguage } from "@/app/context/useLanguage.js";
 import { useAuth } from "@/app/context/useAuth";
 import ErrorState from "@/shared/components/ErrorState";
 
@@ -18,8 +18,6 @@ export default function BrowsePage() {
   const [openId, setOpenId] = useState(null);
   const [optimisticApplied, setOptimisticApplied] = useState(new Set());
 
-  const u = user?.data;
-
   const filteredData = useMemo(() => {
     if (!search) return scholarships;
 
@@ -30,11 +28,13 @@ export default function BrowsePage() {
     );
   }, [search, scholarships]);
 
-  useEffect(() => {
-    if (user?.data?.appliedScholarships) {
-      setOptimisticApplied(new Set(user.data.appliedScholarships));
-    }
-  }, [user?.data?.appliedScholarships]);
+useEffect(() => {
+  if (!user) return;
+
+  setOptimisticApplied(
+    new Set(user.appliedScholarships || [])
+  );
+}, [user]);
 
   const handleToggle = useCallback((id) => {
     setOpenId((prev) => (prev === id ? null : id));
@@ -62,12 +62,7 @@ export default function BrowsePage() {
   if (loading) return <LoadingOverlay />;
 
   if (error) {
-    return (
-      <ErrorState
-      message={error}
-      onAction={refetch}
-    />
-    );
+    return <ErrorState message={error} onAction={refetch} />;
   }
 
   return (
@@ -100,7 +95,7 @@ export default function BrowsePage() {
                 open={openId === s._id}
                 onToggle={() => handleToggle(s._id)}
                 applied={applied}
-                user={u}
+                user={user}
               />
             );
           })}

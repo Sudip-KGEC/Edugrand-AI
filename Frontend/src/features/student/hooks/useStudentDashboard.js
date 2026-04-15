@@ -9,16 +9,12 @@ export default function useStudentDashboard() {
   const fetchApplications = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await getStudentApplications();
-
-      const data = Array.isArray(res?.data)
-        ? res.data
-        : res || [];
-
-      setApplications(data);
       setError("");
+
+      const data = await getStudentApplications();
+      setApplications(data);
     } catch (err) {
-      setError(err.message || "Failed to load applications");
+      setError(err?.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }

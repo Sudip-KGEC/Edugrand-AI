@@ -1,19 +1,17 @@
 import { useState } from "react";
-import { Mail, Pencil, Loader2, Plus } from "lucide-react";
+import { Mail, Pencil, Loader2 } from "lucide-react";
 import useProfile from "../hooks/useProfile";
 import "./profile.scss";
 
 export default function Profile() {
- 
-
   const { user, formData, setFormData, updateProfile, loading } = useProfile();
 
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
 
-  if (!user?.data) return null;
+  if (!user) return null;
 
-  const u = user.data;
+  const u = user;
 
   const validate = () => {
     if (u.role === "student") {
@@ -39,7 +37,6 @@ export default function Profile() {
   return (
     <>
       <div className="profile">
-
         <div className="profile__actions">
           <button onClick={() => setOpen(true)} className="btn-icon">
             <Pencil size={16} />

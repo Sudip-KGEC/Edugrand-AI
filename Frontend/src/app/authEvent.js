@@ -7,7 +7,5 @@ export const setAuthHandler = (fn) => {
 export const triggerAuthModal = () => {
   if (typeof openAuthModal === "function") {
     openAuthModal();
-  } else {
-    console.warn("Auth handler not initialized yet");
   }
 };

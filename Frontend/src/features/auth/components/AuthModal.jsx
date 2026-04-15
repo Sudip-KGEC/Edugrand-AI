@@ -56,7 +56,7 @@ export default function AuthModal({ onClose }) {
               disabled={loading || !email}
               className="btn-primary"
             >
-              {loading ? "Sending..." : "Continue"}
+              {loading ? "Sending..." : "Send OTP"}
             </button>
           </>
         )}
@@ -67,7 +67,7 @@ export default function AuthModal({ onClose }) {
               OTP sent to <b>{email}</b>
             </p>
 
-            <OtpInput otp={otp} setOtp={setOtp} onComplete={verifyOtp} />
+            <OtpInput otp={otp} setOtp={setOtp} />
 
             <button
               onClick={verifyOtp}
@@ -120,15 +120,27 @@ export default function AuthModal({ onClose }) {
 
             <input
               type="number"
-              value={profile.class12Marks}
+              value={profile.class12Marks || ""}
               onChange={(e) =>
-                setProfile((p) => ({ ...p, class12Marks: e.target.value }))
+                setProfile((p) => ({
+                  ...p,
+                  class12Marks: e.target.value,
+                }))
               }
               placeholder="Class 12 Marks"
               className="auth__input"
             />
 
-            <select className="auth__input">
+            <select
+              value={profile.highestDegree || ""}
+              onChange={(e) =>
+                setProfile((p) => ({
+                  ...p,
+                  highestDegree: e.target.value,
+                }))
+              }
+              className="auth__input"
+            >
               <option value="">Select Highest Degree</option>
               <option value="High School">High School</option>
               <option value="Bachelor's">Bachelor's</option>
@@ -136,7 +148,16 @@ export default function AuthModal({ onClose }) {
               <option value="PhD">PhD</option>
             </select>
 
-            <select className="auth__input">
+            <select
+              value={profile.currentDegree || ""}
+              onChange={(e) =>
+                setProfile((p) => ({
+                  ...p,
+                  currentDegree: e.target.value,
+                }))
+              }
+              className="auth__input"
+            >
               <option value="">Select Current Degree</option>
               <option value="High School">High School</option>
               <option value="Bachelor's">Bachelor's</option>
@@ -146,7 +167,7 @@ export default function AuthModal({ onClose }) {
 
             <button
               onClick={completeProfile}
-              disabled={loading || !profile.name}
+              disabled={loading || !profile.name || !profile.college}
               className="btn-primary"
             >
               {loading ? "Saving..." : "Complete Registration"}

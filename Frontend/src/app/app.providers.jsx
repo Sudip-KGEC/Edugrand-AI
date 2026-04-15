@@ -10,9 +10,7 @@ function AppContent({ children }) {
   const { showAuthModal, closeAuth, loading } = useAuth();
 
   if (loading) {
-    return (
-      <Loader fullScreen text="Initializing..." />
-    );
+    return <Loader fullScreen text="Initializing..." />;
   }
 
   return (

@@ -1,23 +1,25 @@
 import api from "@/app/api/axios";
 
-// 📚 FETCH
-export const fetchScholarships = (adminId) =>
-  api.get("/scholarships", {
+export const fetchScholarships = async (adminId) => {
+  const res = await api.get("/scholarships", {
     params: adminId ? { adminId } : {},
-  }).then(res => res.data);
+  });
+  return res.data.scholarships || res.data.data || [];
+};
 
-// ➕ CREATE
-export const createScholarship = (data) =>
-  api.post("/scholarships", data)
-    .then(res => res.data);
+export const createScholarship = async (data) => {
+  const res = await api.post("/scholarships", data);
+  return res.data;
+};
 
-// 🎯 APPLY
-export const applyForScholarship = (id) =>
-  api.post("/scholarships/apply", {
+export const applyForScholarship = async (id) => {
+  const res = await api.post("/scholarships/apply", {
     scholarshipId: id,
-  }).then(res => res.data);
+  });
+  return res.data;
+};
 
-// 👤 STUDENT APPLICATIONS
-export const getStudentApplications = () =>
-  api.get("/scholarships/my-applications")
-    .then(res => res.data);
+export const getStudentApplications = async () => {
+  const res = await api.get("/scholarships/my-applications");
+  return res.data.applications || res.data.data || [];
+};

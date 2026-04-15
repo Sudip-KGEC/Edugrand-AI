@@ -3,15 +3,13 @@ import {
   sendOtp,
   verifyOtp,
   completeProfile,
-  logoutUser,
   updateProfile,
-  getUserProfile,
 } from "../services/auth.api";
 import { useAuth } from "@/app/context/useAuth";
 import { useNavigate } from "react-router-dom";
 
 export default function useAuthFlow(onClose) {
-  const { login, setUser } = useAuth();
+  const { login, logout, updateUser } = useAuth();
   const navigate = useNavigate();
 
   const [step, setStep] = useState("email");
@@ -47,34 +45,42 @@ export default function useAuthFlow(onClose) {
     }
   };
 
-  const handleVerifyOtp = async () => {
-    try {
-      if (otp.length !== 6) {
-        return setError("OTP must be 6 digits");
-      }
+const handleVerifyOtp = async () => {
+  if (loading) return;
 
-      setLoading(true);
-      setError("");
+  try {
+    const finalOtp = Array.isArray(otp) ? otp.join("") : otp;
 
-      const res = await verifyOtp(email, otp);
-
-      if (res.type === "LOGIN") {
-        const userData = await getUserProfile();
-        login(userData);
-        onClose?.();
-        navigate("/");
-      }
-
-      if (res.type === "REGISTER") {
-        setStep("profile");
-      }
-    } catch (err) {
-      setError(err?.response?.data?.message || err.message);
-    } finally {
-      setLoading(false);
+    if (finalOtp.length !== 6) {
+      return setError("OTP must be 6 digits");
     }
-  };
 
+    setLoading(true);
+    setError("");
+
+    const res = await verifyOtp(email, finalOtp);
+
+    if (res?.user && res?.accessToken) {
+      login(res.user, res.accessToken);
+      onClose?.();
+      navigate("/");
+      return;
+    }
+
+    setStep("profile");
+  } catch (err) {
+    const msg =
+      err?.response?.data?.message || err.message;
+
+    setError(msg);
+
+    if (msg.toLowerCase().includes("expired")) {
+      setStep("email");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
   const handleCompleteProfile = async () => {
     try {
       if (!profile.name || !profile.college) {
@@ -84,15 +90,16 @@ export default function useAuthFlow(onClose) {
       setLoading(true);
       setError("");
 
-      await completeProfile({
-        email,
+      const res = await completeProfile({
         ...profile,
+        email,
       });
 
-      const userData = await getUserProfile();
-      login(userData);
-      onClose?.();
-      navigate("/");
+      if (res?.user) {
+        login(res.user, res.accessToken);
+        onClose?.();
+        navigate("/");
+      }
     } catch (err) {
       setError(err?.response?.data?.message || err.message);
     } finally {
@@ -103,15 +110,14 @@ export default function useAuthFlow(onClose) {
   const handleUpdateProfile = async (data) => {
     try {
       const res = await updateProfile(data);
-      setUser(res.data);
+      updateUser(res.user || res.data);
     } catch (err) {
       setError(err?.response?.data?.message || err.message);
     }
   };
 
   const handleLogout = async () => {
-    await logoutUser();
-    setUser(null);
+    await logout();
   };
 
   return {

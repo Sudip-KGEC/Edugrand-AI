@@ -2,6 +2,7 @@ import Profile from "@/features/profile/components/Profile";
 import useStudentDashboard from "../hooks/useStudentDashboard";
 import LoadingOverlay from "@/shared/components/LoadingOverlay";
 import MyApplications from "../components/MyApplications";
+import ErrorState from "@/shared/components/ErrorState";
 import "./studentDashboard.scss";
 
 export default function StudentDashboardPage() {
@@ -10,19 +11,21 @@ export default function StudentDashboardPage() {
 
   if (loading) return <LoadingOverlay />;
 
+  if (error) {
+    return (
+      <ErrorState
+        message={error}
+        onAction={refetch}
+      />
+    );
+  }
+
   return (
     <div className="student-dashboard">
       <Profile />
 
-      {error && (
-        <div className="student-dashboard__error">
-          {error}
-        </div>
-      )}
-
       <MyApplications
         data={applications}
-        loading={loading}
         onRefresh={refetch}
       />
     </div>

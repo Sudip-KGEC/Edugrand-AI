@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Trash2, CheckCircle, BellOff } from "lucide-react";
+import { Bell, Trash2, CheckCircle, BellOff, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import useNotifications from "../hooks/useNotifications";
 import "./notification.scss";
@@ -11,6 +11,7 @@ export default function NotificationCenter() {
     unreadCount,
     markAllRead,
     clearAll,
+    removeOne,
   } = useNotifications();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +20,7 @@ export default function NotificationCenter() {
     if (isOpen && unreadCount > 0) {
       markAllRead();
     }
-  }, [isOpen]);
+  }, [isOpen, unreadCount, markAllRead]);
 
   return (
     <div className="notify">
@@ -80,7 +81,11 @@ export default function NotificationCenter() {
 
                 {!loading &&
                   notifications.map((n) => (
-                    <NotificationItem key={n._id} n={n} />
+                    <NotificationItem
+                      key={n._id}
+                      n={n}
+                      onDelete={removeOne}
+                    />
                   ))}
               </div>
             </motion.div>
@@ -91,11 +96,20 @@ export default function NotificationCenter() {
   );
 }
 
-function NotificationItem({ n }) {
+function NotificationItem({ n, onDelete }) {
   return (
     <div className={`notify__item ${!n.isRead ? "unread" : ""}`}>
-      <p className="title">{n.title}</p>
-      <p className="message">{n.message}</p>
+      <div className="notify__content">
+        <p className="title">{n.title}</p>
+        <p className="message">{n.message}</p>
+      </div>
+
+      <button
+        className="notify__delete"
+        onClick={() => onDelete(n._id)}
+      >
+        <X size={14} />
+      </button>
     </div>
   );
 }

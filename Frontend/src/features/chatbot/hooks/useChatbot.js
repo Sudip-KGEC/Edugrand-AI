@@ -12,49 +12,47 @@ export default function useChatbot() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const sendMessage = useCallback(
-    async (input) => {
-      if (!input.trim()) return;
+  const sendMessage = useCallback(async (input) => {
+    if (!input.trim() || loading) return;
 
-      const userMsg = {
-        id: Date.now().toString(),
-        role: "user",
-        text: input,
-      };
+    const userMsg = {
+      id: crypto.randomUUID(),
+      role: "user",
+      text: input,
+    };
 
-      const updatedMessages = [...messages, userMsg];
-      setMessages(updatedMessages);
+    setMessages((prev) => [...prev, userMsg]);
 
+    try {
       setLoading(true);
       setError("");
 
-      try {
-        const reply = await sendMessageToAI(input, updatedMessages);
+      const updatedMessages = [...messages, userMsg];
 
-        const botMsg = {
-          id: Date.now().toString() + "-bot",
+      const reply = await sendMessageToAI(input, updatedMessages);
+
+      const botMsg = {
+        id: crypto.randomUUID(),
+        role: "model",
+        text: reply,
+      };
+
+      setMessages((prev) => [...prev, botMsg].slice(-30));
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: "err-" + Date.now(),
           role: "model",
-          text: reply,
-        };
-
-        setMessages((prev) => [...prev, botMsg].slice(-30));
-      } catch (err) {
-        setError(err.message || "Something went wrong");
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: "err-" + Date.now(),
-            role: "model",
-            text: "Failed to respond. Try again.",
-          },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [messages]
-  );
+          text: "Failed to respond. Try again.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }, [messages, loading]);
 
   const clearChat = () => {
     setMessages([INITIAL_MESSAGE]);

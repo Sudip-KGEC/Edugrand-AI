@@ -10,9 +10,7 @@ import BrowsePage from "@/features/scholarship/pages/BrowsePage";
 import StudentDashboardPage from "@/features/student/pages/StudentDashboardPage";
 import AdminDashboardPage from "@/features/admin/pages/AdminDashboardPage";
 
-
 import ProtectedRoute from "@/app/routes/ProtectedRoute";
-import RoleRoute from "@/app/routes/RoleRoute";
 import Profile from "@/features/profile/components/Profile";
 import NotFound from "../shared/components/NotFound";
 
@@ -38,10 +36,8 @@ export default function AppRoutes() {
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
-              <RoleRoute role="student">
-                <StudentDashboardPage />
-              </RoleRoute>
+            <ProtectedRoute role="student">
+              <StudentDashboardPage />
             </ProtectedRoute>
           }
         />
@@ -49,20 +45,13 @@ export default function AppRoutes() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
-              <RoleRoute role="admin">
-                <AdminDashboardPage />
-              </RoleRoute>
+            <ProtectedRoute role="admin">
+              <AdminDashboardPage />
             </ProtectedRoute>
           }
         />
 
-        <Route
-          path="*"
-          element={
-            <NotFound />
-          }
-        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       <Footer />

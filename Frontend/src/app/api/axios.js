@@ -1,51 +1,70 @@
 import axios from "axios";
 
-const BASE_URL =
-  import.meta.env.VITE_BACKEND_URL || "https://edugrand-ai.onrender.com/api";
+const BASE_URL ="http://localhost:5000/api/v1"
+  
+
+let accessToken = null;
+
+export const setAccessToken = (token) => {
+  accessToken = token;
+};
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, 
-  timeout: 10000,
+  withCredentials: true,
+  timeout: 20000,
 });
 
-//  RESPONSE INTERCEPTOR ONLY
-axiosInstance.interceptors.response.use(
-  (response) => {
-    const normalize = (data) => {
-      if (!data) return data;
-
-      if (Array.isArray(data)) {
-        return data.map((item) => ({
-          ...item,
-          id: item._id || item.id,
-        }));
-      }
-
-      if (typeof data === "object") {
-        return {
-          ...data,
-          id: data._id || data.id,
-        };
-      }
-
-      return data;
-    };
-
-    response.data = normalize(response.data);
-
-    return response;
+axiosInstance.interceptors.request.use(
+  (config) => {
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
   },
-  (error) => {
-    const status = error.response?.status;
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "Something went wrong";
+  (error) => Promise.reject(error)
+);
 
-    console.error("API Error:", message);
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-    return Promise.reject({ message, status });
+    if (
+      originalRequest.url.includes("/auth/refresh") ||
+      originalRequest._skipAuthRefresh
+    ) {
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const res = await axios.post(
+          `${BASE_URL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+
+        const newToken = res.data.accessToken;
+
+        setAccessToken(newToken);
+
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return axiosInstance(originalRequest);
+      } catch {
+        accessToken = null;
+
+        if (!window.location.pathname.includes("/")) {
+          window.location.href = "/";
+        }
+
+        return Promise.reject(error);
+      }
+    }
+
+    return Promise.reject(error);
   }
 );
 
