@@ -39,7 +39,7 @@ export const chatRateLimiter = (req, res, next) => {
 
   if (record.count > MAX_REQUESTS) {
     return next(
-      new ApiError(429, "Too many requests. Please try again later.")
+      ApiError.tooManyRequests("Too many requests. Please try again later.")
     );
   }
 
