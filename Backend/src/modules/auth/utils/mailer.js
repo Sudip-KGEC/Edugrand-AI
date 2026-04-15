@@ -3,10 +3,17 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT) || 587,
+  secure: false,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
 });
 
 function generateOtpTemplate(otp) {
@@ -25,10 +32,8 @@ function generateOtpTemplate(otp) {
       <tr>
         <td align="center">
 
-          <!-- Main Container -->
           <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:14px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
 
-            <!-- Header -->
             <tr>
               <td style="background:linear-gradient(90deg,#4f46e5,#6366f1); padding:24px; text-align:center; color:#ffffff;">
                 <h1 style="margin:0; font-size:24px; letter-spacing:0.5px;">
@@ -40,7 +45,6 @@ function generateOtpTemplate(otp) {
               </td>
             </tr>
 
-            <!-- Body -->
             <tr>
               <td style="padding:32px 30px;">
 
@@ -53,7 +57,6 @@ function generateOtpTemplate(otp) {
                   Please use the verification code below to continue.
                 </p>
 
-                <!-- OTP BOX -->
                 <div style="text-align:center; margin:30px 0;">
                   <div style="
                     display:inline-block;
@@ -70,14 +73,12 @@ function generateOtpTemplate(otp) {
                   </div>
                 </div>
 
-                <!-- Info -->
                 <p style="text-align:center; font-size:13px; color:#6b7280;">
                   ⏱ This code will expire in <strong>10 minutes</strong>
                 </p>
 
                 <hr style="border:none; border-top:1px solid #e5e7eb; margin:25px 0;" />
 
-                <!-- Security Note -->
                 <p style="font-size:12px; color:#9ca3af; line-height:1.5;">
                   If you didn’t request this code, you can safely ignore this email.  
                   Never share your OTP with anyone — Edugrand will never ask for it.
@@ -86,7 +87,6 @@ function generateOtpTemplate(otp) {
               </td>
             </tr>
 
-            <!-- Footer -->
             <tr>
               <td style="background:#f9fafb; padding:20px; text-align:center; font-size:12px; color:#9ca3af;">
                 
@@ -116,6 +116,8 @@ function generateOtpTemplate(otp) {
 }
 
 export async function sendOtpEmail(email, otp) {
+  await transporter.verify();
+
   await transporter.sendMail({
     from: `"Edugrand AI Security" <${process.env.SMTP_USER}>`,
     to: email,
