@@ -1,18 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/app/context/useLanguage";
 import { useAuth } from "@/app/context/useAuth";
+import { lazy, Suspense } from "react";
 
 import HeroSection from "../components/HeroSection";
 import ServicesSection from "../components/ServicesSection";
 import HowItWorks from "../components/HowItWorks";
-
-import ChatBot from "@/features/chatbot/components/ChatBot";
 
 import "./home.scss";
 import Testimonials from "../components/Testimonials";
 import Stats from "../components/Stats";
 import Categories from "../components/Categories";
 import CTA from "../components/CTA";
+
+const ChatBot = lazy(() => import("@/features/chatbot/components/ChatBot"));
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -33,12 +34,14 @@ export default function HomePage() {
 
       <HowItWorks />
 
-      <Testimonials/>
-      <Stats/>
-      <Categories/>
-      <CTA/>
+      <Testimonials />
+      <Stats />
+      <Categories />
+      <CTA />
 
-      <ChatBot />
+      <Suspense fallback={null}>
+        <ChatBot />
+      </Suspense>
     </div>
   );
 }
