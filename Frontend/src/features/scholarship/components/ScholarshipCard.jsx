@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./scholarshipCard.scss";
 
 export default function ScholarshipCard({
@@ -10,14 +10,10 @@ export default function ScholarshipCard({
 }) {
   const isAdmin = user?.role === "admin";
   const isStudent = user?.role === "student";
-  const hasOfficialLink = Boolean(scholarship?.officialUrl);
+  const hasOfficialLink = !!scholarship?.officialUrl;
 
   const [loading, setLoading] = useState(false);
   const [localApplied, setLocalApplied] = useState(applied);
-
-  useEffect(() => {
-    setLocalApplied(applied);
-  }, [applied]);
 
   const handleApplyClick = async () => {
     if (loading || localApplied) return;
@@ -25,11 +21,7 @@ export default function ScholarshipCard({
     setLocalApplied(true);
     setLoading(true);
 
-    const res = await onApply(scholarship._id);
-
-    if (!res?.success && !res?.alreadyApplied) {
-      setLocalApplied(false);
-    }
+    await onApply(scholarship._id);
 
     setLoading(false);
   };
@@ -37,6 +29,7 @@ export default function ScholarshipCard({
   return (
     <div className="card">
       <div className="card__content">
+
         <div className="card__header">
           <div>
             <h3 className="card__title">{scholarship.name}</h3>
@@ -87,8 +80,8 @@ export default function ScholarshipCard({
         )}
 
         {isStudent && !isAdmin && (
-          <div className="card__actions">
-            {hasOfficialLink && (
+          <>
+            {hasOfficialLink ? (
               <a
                 href={scholarship.officialUrl}
                 target="_blank"
@@ -97,27 +90,27 @@ export default function ScholarshipCard({
               >
                 Visit Official Site
               </a>
+            ) : (
+              <button
+                onClick={handleApplyClick}
+                disabled={localApplied || loading}
+                className={`btn-primary ${
+                  localApplied ? "disabled" : ""
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="spin" size={16} />
+                    Applying...
+                  </>
+                ) : localApplied ? (
+                  "Applied"
+                ) : (
+                  "Apply Now"
+                )}
+              </button>
             )}
-
-            <button
-              onClick={handleApplyClick}
-              disabled={localApplied || loading}
-              className={`btn-primary ${
-                localApplied ? "disabled" : ""
-              }`}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="spin" size={16} />
-                  Applying...
-                </>
-              ) : localApplied ? (
-                "Applied"
-              ) : (
-                "Apply Now"
-              )}
-            </button>
-          </div>
+          </>
         )}
 
         {!user && (
