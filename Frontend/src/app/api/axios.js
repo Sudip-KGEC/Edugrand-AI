@@ -12,7 +12,7 @@ export const setAccessToken = (token) => {
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
-  timeout: 20000,
+  timeout: 60000,
 });
 
 axiosInstance.interceptors.request.use(
