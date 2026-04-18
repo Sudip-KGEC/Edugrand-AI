@@ -1,6 +1,14 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 function generateOtpTemplate(otp) {
   return `
@@ -9,84 +17,68 @@ function generateOtpTemplate(otp) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Edugrand AI - OTP Verification</title>
+    <title>Edugrand AI - Security Verification</title>
   </head>
 
-  <body style="margin:0; padding:0; background-color:#f3f6fb; font-family: 'Segoe UI', Arial, sans-serif;">
+  <body style="margin:0; padding:0; background:#0f172a; font-family:Segoe UI,Arial,sans-serif;">
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="padding:30px 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
       <tr>
         <td align="center">
 
-          <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:14px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+          <table width="560" cellpadding="0" cellspacing="0" style="background:#111827; border-radius:16px; overflow:hidden; border:1px solid #1f2937;">
 
             <tr>
-              <td style="background:linear-gradient(90deg,#4f46e5,#6366f1); padding:24px; text-align:center; color:#ffffff;">
-                <h1 style="margin:0; font-size:24px; letter-spacing:0.5px;">
-                  🎓 Edugrand AI
-                </h1>
-                <p style="margin:6px 0 0; font-size:13px; opacity:0.9;">
-                  Smart Learning • Career Growth • AI Powered
-                </p>
+              <td style="background:linear-gradient(135deg,#6366f1,#8b5cf6); padding:26px; text-align:center; color:#fff;">
+                <h1 style="margin:0; font-size:22px; letter-spacing:0.5px;">Edugrand AI</h1>
+                <p style="margin:6px 0 0; font-size:12px; opacity:0.9;">Secure Access Verification</p>
               </td>
             </tr>
 
             <tr>
-              <td style="padding:32px 30px;">
+              <td style="padding:32px 28px; color:#e5e7eb;">
 
-                <h2 style="margin:0 0 12px; color:#111827;">
-                  Verify Your Identity
+                <h2 style="margin:0 0 10px; font-size:20px; color:#ffffff;">
+                  Verify Your Login
                 </h2>
 
-                <p style="margin:0 0 20px; color:#6b7280; font-size:14px; line-height:1.6;">
-                  You're trying to securely sign in to your Edugrand account.  
-                  Please use the verification code below to continue.
+                <p style="margin:0 0 20px; font-size:14px; color:#9ca3af; line-height:1.6;">
+                  Enter the one-time code below to securely continue. Do not share this code with anyone.
                 </p>
 
                 <div style="text-align:center; margin:30px 0;">
                   <div style="
                     display:inline-block;
-                    background:linear-gradient(135deg,#eef2ff,#e0e7ff);
-                    padding:18px 30px;
-                    font-size:32px;
-                    letter-spacing:8px;
+                    background:linear-gradient(135deg,#1e293b,#0f172a);
+                    padding:20px 34px;
+                    font-size:34px;
+                    letter-spacing:10px;
                     font-weight:700;
-                    border-radius:10px;
-                    color:#1e1b4b;
-                    border:1px dashed #c7d2fe;
+                    border-radius:12px;
+                    color:#f8fafc;
+                    border:1px solid #374151;
+                    box-shadow:0 0 20px rgba(99,102,241,0.25);
                   ">
                     ${otp}
                   </div>
                 </div>
 
-                <p style="text-align:center; font-size:13px; color:#6b7280;">
-                  ⏱ This code will expire in <strong>10 minutes</strong>
+                <p style="text-align:center; font-size:13px; color:#9ca3af;">
+                  Expires in <strong style="color:#ffffff;">10 minutes</strong>
                 </p>
 
-                <hr style="border:none; border-top:1px solid #e5e7eb; margin:25px 0;" />
+                <hr style="border:none; border-top:1px solid #1f2937; margin:26px 0;" />
 
-                <p style="font-size:12px; color:#9ca3af; line-height:1.5;">
-                  If you didn’t request this code, you can safely ignore this email.  
-                  Never share your OTP with anyone — Edugrand will never ask for it.
+                <p style="font-size:12px; color:#6b7280; line-height:1.6;">
+                  If you did not request this code, you can safely ignore this email. For security reasons, never share your OTP.
                 </p>
 
               </td>
             </tr>
 
             <tr>
-              <td style="background:#f9fafb; padding:20px; text-align:center; font-size:12px; color:#9ca3af;">
-                
-                <p style="margin:0;">
-                  © ${new Date().getFullYear()} Edugrand AI. All rights reserved.
-                </p>
-
-                <p style="margin:6px 0 0;">
-                  Need help? Contact 
-                  <a href="mailto:support@edugrand.ai" style="color:#4f46e5; text-decoration:none;">
-                    support@edugrand.ai
-                  </a>
-                </p>
-
+              <td style="background:#020617; padding:18px; text-align:center; font-size:11px; color:#6b7280;">
+                <p style="margin:0;">© ${new Date().getFullYear()} Edugrand AI</p>
               </td>
             </tr>
 
@@ -102,10 +94,17 @@ function generateOtpTemplate(otp) {
 }
 
 export async function sendOtpEmail(email, otp) {
-  await resend.emails.send({
-    from: "Edugrand AI <onboarding@resend.dev>",
+  const info = await transporter.sendMail({
+    from: `"Edugrand AI Security" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: "Your Edugrand Verification Code",
+    subject: "Your Secure OTP Code",
     html: generateOtpTemplate(otp),
+    text: `Your OTP is ${otp}. It expires in 10 minutes.`,
   });
+
+  if (!info?.messageId) {
+    throw new Error("Email not sent");
+  }
+
+  return info;
 }
